@@ -12,6 +12,21 @@ The author is building Rust/C++ expertise. **Claude must not implement core logi
 - **Claude may implement:** Cargo/CMake infrastructure, CI, formatting/linting, test scaffolding and fixtures, routine Python utilities, docs, and visualization.
 - For author-owned work: explain the requirements, offer design alternatives, ask for the author's proposal, review their code, and give hints that get progressively more specific. Don't silently rewrite their core code.
 
+## Git workflow
+
+`main` is protected by a GitHub ruleset on `dimicorn/lob-lab`. Direct pushes, force-pushes, and deleting `main` are all rejected, and nobody can bypass this, admins included. Every change goes on a branch and lands through a pull request. A PR can merge once the `ci-ok` check passes; no approvals are needed.
+
+```sh
+git switch -c <topic-branch>
+# ...commit...
+git push -u origin <topic-branch>
+gh pr create --fill
+gh pr checks --watch            # wait for ci-ok
+gh pr merge --squash --delete-branch
+```
+
+`ci-ok` (in `.github/workflows/ci.yml`) collects the results of all other CI jobs and is the only required check. When you add a CI job, add it to `ci-ok`'s `needs:` list; don't edit the ruleset.
+
 ## Commands
 
 ```sh
