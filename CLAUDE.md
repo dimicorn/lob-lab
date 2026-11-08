@@ -53,6 +53,12 @@ All presets set `LOB_WERROR=ON`, so C++ warnings (`-Wconversion`, `-Wsign-conver
 - The target platform is Linux x86-64 (CI uses ubuntu-24.04 with gcc and clang). Local development is on macOS arm64.
 - Never commit datasets (e.g., LOBSTER samples) or large binaries. `/data/` and `*.bin` are gitignored.
 
+## Commits and releases
+
+- Use Conventional Commits: `type(scope): summary`, with types `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `style`, `build`, `ci`, `chore`, `revert`. Scopes name subsystems (`ffi`, `codec`, `parser`, `book`, `replay`, `features`, `ml`, `bench`, …). Mark breaking changes with `!`, e.g. any ABI change that bumps `LOB_FFI_ABI_VERSION`.
+- git-cliff (`cliff.toml`) builds CHANGELOG.md from these prefixes, and commits without a prefix are left out. PRs are squash-merged, so **the PR title must also be a Conventional Commit**.
+- The version is set in two places that must match: `[workspace.package] version` in `Cargo.toml` and `project(lob_lab VERSION …)` in `CMakeLists.txt`. `release.yml` checks both against the tag. Releases go through a release PR (bump versions → `uvx git-cliff --tag vX.Y.Z -o CHANGELOG.md` → `chore(release): vX.Y.Z` PR → tag after merge); the full steps are in CONTRIBUTING.md.
+
 ## Current status
 
 M0 (toolchain) is complete: the ABI exposes only `lob_ffi_abi_version()`. Next is M1: the author designs the canonical event schema and the buffer-ownership contract, and Claude reviews it.

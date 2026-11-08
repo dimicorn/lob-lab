@@ -3,6 +3,9 @@ resolver = "3"
 members = ["rust/ffi"]
 
 [workspace.package]
+# Single project version. Keep in sync with project(VERSION) in CMakeLists.txt;
+# the release workflow checks both against the git tag.
+version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
 publish = false
