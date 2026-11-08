@@ -1,0 +1,44 @@
+name: Release
+
+# main is protected (PR-only), so CHANGELOG.md and version bumps land in a release PR
+# (see CONTRIBUTING.md). On the tag push this workflow only verifies versions and
+# publishes a GitHub Release with that version's changelog section.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: read # git-cliff fetches PR numbers through the API
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check tag matches Cargo and CMake versions
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          cargo_ver=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
+          cmake_ver=$(sed -n 's/^project(lob_lab VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt)
+          echo "tag=$tag cargo=$cargo_ver cmake=$cmake_ver"
+          test "$tag" = "$cargo_ver" && test "$tag" = "$cmake_ver"
+
+      - name: Release notes
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --verbose --latest --strip header
+        env:
+          OUTPUT: RELEASE_NOTES.md
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md --verify-tag

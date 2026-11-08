@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
+# Keep VERSION in sync with [workspace.package] version in Cargo.toml.
 project(lob_lab VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
