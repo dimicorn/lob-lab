@@ -1,0 +1,19 @@
+# Build outputs
+/target/
+/build/
+compile_commands.json
+
+# Data — never commit restricted datasets or large artifacts
+/data/
+*.bin
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

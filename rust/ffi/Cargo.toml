@@ -1,0 +1,15 @@
+[package]
+name = "lob-ffi"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "C ABI surface exposing LOB-Lab Rust ingestion to C++."
+
+[lib]
+name = "lob_ffi"
+# staticlib: linked into C++ via CMake. rlib: lets Rust tests/benches use the crate.
+crate-type = ["staticlib", "rlib"]
+
+[lints]
+workspace = true
